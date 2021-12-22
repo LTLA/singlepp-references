@@ -16,7 +16,7 @@ jobs:
     - name: Set directories
       run: |
         echo "R_PKG_DIR=${R_HOME}/site-library" >> $GITHUB_ENV
-        echo "R_HUB_DIR=${R_HOME}/site-library" >> $GITHUB_ENV
+        R --slave -e 'cat(paste0("R_CACHE_DIR=", dirname(tools::R_user_dir("asdasd")), "\n"))' >> $GITHUB_ENV
 
     - name: Restore the package directory
       uses: actions/cache@v2
@@ -27,7 +27,7 @@ jobs:
     - name: Restore the Hub directories
       uses: actions/cache@v2
       with:
-        path: ${{ env.R_HUB_DIR }}
+        path: ${{ env.R_CACHE_DIR }}
         key: hub-cache
 
     - name: Install dependencies
