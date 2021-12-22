@@ -1,0 +1,50 @@
+on:
+  push:
+    branches:
+      - master
+
+name: "Publish references"
+
+jobs:
+  build:
+    name: Publish references
+    runs-on: ubuntu-latest
+    container: bioconductor/bioconductor_docker:devel
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set directories
+      run: |
+        echo "R_PKG_DIR=${R_HOME}/site-library" >> $GITHUB_ENV
+        echo "R_HUB_DIR=${R_HOME}/site-library" >> $GITHUB_ENV
+
+    - name: Restore the package directory
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.R_PKG_DIR }}
+        key: preinstalled-packages
+
+    - name: Restore the Hub directories
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.R_HUB_DIR }}
+        key: hub-cache
+
+    - name: Install dependencies
+      shell: Rscript {0}
+      run: BiocManager::install(c("Rcpp", "SingleR", "celldex", "AnnotationHub", "ensembl"))
+
+    - name: Run the formatter
+      shell: Rscript {0}
+      run: source("format.R")
+
+    - name: Publish BlueprintEncode reference
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        removeArtifacts: true
+        artifactErrorsFailBuild: true
+        artifacts: "BlueprintEncode/*"
+        name: BlueprintEncode 
+        tag: BlueprintEncode
+        body: "Files corresponding to `celldex::BlueprintEncodeData()`."
