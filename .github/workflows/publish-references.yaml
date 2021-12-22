@@ -32,7 +32,7 @@ jobs:
 
     - name: Install dependencies
       shell: Rscript {0}
-      run: BiocManager::install(c("Rcpp", "SingleR", "celldex", "AnnotationHub", "ensembl"))
+      run: BiocManager::install(c("Rcpp", "SingleR", "celldex", "AnnotationHub", "ensembldb"))
 
     - name: Run the formatter
       shell: Rscript {0}
