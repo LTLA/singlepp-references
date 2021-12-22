@@ -16,7 +16,7 @@ jobs:
     - name: Set directories
       run: |
         echo "R_PKG_DIR=${R_HOME}/site-library" >> $GITHUB_ENV
-        R --slave -e 'cat(paste0("R_CACHE_DIR=", dirname(tools::R_user_dir("asdasd")), "\n"))' >> $GITHUB_ENV
+        R --slave -e 'cat(paste0("R_CACHE_DIR=", dirname(tools::R_user_dir("asdasd", "cache")), "\n"))' >> $GITHUB_ENV
 
     - name: Restore the package directory
       uses: actions/cache@v2
