@@ -34,5 +34,7 @@ formatter <- function(x, prefix) {
     }
 }
 
-X <- BlueprintEncodeData(ensembl=TRUE)
-formatter(X, "BlueprintEncode")
+for (ref in c("BlueprintEncode", "ImmGen", "HumanPrimaryCellAtlas", "MonacoImmune", "MouseRNAseq", "DatabaseImmuneCellExpression", "NovershternHematopoietic")) {
+    X <- get(paste0(ref, "Data"))(ensembl=TRUE)
+    formatter(X, ref)
+}
