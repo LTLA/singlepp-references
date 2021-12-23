@@ -28,7 +28,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.R_CACHE_DIR }}
-        key: hub-cache
+        key: hub-cache2
 
     - name: Install dependencies
       shell: Rscript {0}
@@ -38,13 +38,24 @@ jobs:
       shell: Rscript {0}
       run: source("format.R")
 
-    - name: Publish reference datasets
+    - name: Publish human reference datasets
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
         removeArtifacts: true
         artifactErrorsFailBuild: true
-        artifacts: "output/*"
-        name: latest 
-        tag: latest
-        body: "Files for various **celldex** reference datasets."
+        artifacts: "hs/*"
+        name: hs-latest 
+        tag: hs-latest
+        body: "Files for various **celldex** human reference datasets."
+
+    - name: Publish mouse reference datasets
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        removeArtifacts: true
+        artifactErrorsFailBuild: true
+        artifacts: "mm/*"
+        name: mm-latest 
+        tag: mm-latest
+        body: "Files for various **celldex** mouse reference datasets."

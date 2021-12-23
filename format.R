@@ -2,8 +2,7 @@ library(celldex)
 library(SingleR)
 library(matrixStats)
 
-formatter <- function(x, prefix) {
-    dir <- "output"
+formatter <- function(x, prefix, dir) {
     dir.create(dir, showWarnings=FALSE)
 
     mat <- assay(x, "logcounts")
@@ -12,7 +11,7 @@ formatter <- function(x, prefix) {
     write.table(file=mhandle, rmat, sep=",", col.names=FALSE, row.names=FALSE)
 
     ghandle <- gzfile(file.path(dir, paste0(prefix, "_genes.csv.gz")))
-    write.table(data.frame(symbol = rownames(x)), file=ghandle, sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
+    write.table(rowData(x)[,c("ensembl", "symbol"),drop=FALSE], file=ghandle, sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
 
     for (lab in colnames(colData(x))) {
         suff <- sub("label\\.", "", lab)
@@ -34,7 +33,29 @@ formatter <- function(x, prefix) {
     }
 }
 
-for (ref in c("BlueprintEncode", "ImmGen", "HumanPrimaryCellAtlas", "MonacoImmune", "MouseRNAseq", "DatabaseImmuneCellExpression", "NovershternHematopoietic")) {
-    X <- get(paste0(ref, "Data"))(ensembl=TRUE)
-    formatter(X, ref)
+library(AnnotationHub)
+ahub <- AnnotationHub()
+
+for (species in c("hs", "mm")) {
+    if (species == "hs") {
+        ens <- ahub[["AH73881"]]
+        datasets <- c("BlueprintEncode", "HumanPrimaryCellAtlas", "MonacoImmune", "DatabaseImmuneCellExpression", "NovershternHematopoietic", "MonacoImmune")
+    } else {
+        ens <- ahub[["AH73905"]]
+        datasets <- c("ImmGen", "MouseRNAseq")
+    }
+
+    for (ref in datasets) {
+        X <- get(paste0(ref, "Data"))()
+
+        if (!all(grepl("^ENS", rownames(X)))) {
+            rowData(X)$ensembl <- mapIds(ens, keys = rownames(X), keytype = "SYMBOL", column = "GENEID")
+            rowData(X)$symbol <- rownames(X)
+        } else {
+            rowData(X)$ensembl <- rownames(X)
+            rowData(X)$symbol <- mapIds(ens.hs, keys = rownames(X), keytype = "GENEID", column = "SYMBOL")
+        }
+
+        formatter(X, ref, dir=species)
+    }
 }
