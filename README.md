@@ -12,7 +12,7 @@ Each reference dataset is represented by four files that are described below.
 ### `matrix.csv`
 
 This is a CSV file containing a dense matrix of ranks for all samples.
-Each column corresponds to a sample and ranks are computed within each column.
+Each row corresponds to a sample where ranks are computed within each sample.
 We store the ranks to avoid the need to store and transmit floating-point values.
 This file does not contain any row or column names.
 

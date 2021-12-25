@@ -6,7 +6,7 @@ formatter <- function(x, prefix, dir) {
     dir.create(dir, showWarnings=FALSE)
 
     mat <- assay(x, "logcounts")
-    rmat <- colRanks(mat, ties.method="first", preserveShape=TRUE)
+    rmat <- colRanks(mat, ties.method="first")
     mhandle <- gzfile(file.path(dir, paste0(prefix, "_matrix.csv.gz")))
     write.table(file=mhandle, rmat, sep=",", col.names=FALSE, row.names=FALSE)
 
