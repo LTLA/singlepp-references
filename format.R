@@ -6,12 +6,15 @@ formatter <- function(x, prefix, dir) {
     dir.create(dir, showWarnings=FALSE)
 
     mat <- assay(x, "logcounts")
-    rmat <- colRanks(mat, ties.method="first")
+    rmat <- colRanks(mat, ties.method="min")
     mhandle <- gzfile(file.path(dir, paste0(prefix, "_matrix.csv.gz")))
     write.table(file=mhandle, rmat, sep=",", col.names=FALSE, row.names=FALSE)
 
     ghandle <- gzfile(file.path(dir, paste0(prefix, "_genes.csv.gz")))
-    write.table(rowData(x)[,c("ensembl", "symbol"),drop=FALSE], file=ghandle, sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
+    fdf <- rowData(x)[,c("ensembl", "symbol"),drop=FALSE]
+    fdf$ensembl[is.na(fdf$ensembl)] <- ""
+    fdf$symbol[is.na(fdf$symbol)] <- ""
+    write.table(fdf, file=ghandle, sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
 
     for (lab in colnames(colData(x))) {
         suff <- sub("label\\.", "", lab)
