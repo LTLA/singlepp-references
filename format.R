@@ -18,17 +18,23 @@ formatter <- function(x, prefix, dir) {
 
     for (lab in colnames(colData(x))) {
         suff <- sub("label\\.", "", lab)
-        lhandle <- gzfile(file.path(dir, paste0(prefix, "_labels_", suff, ".csv.gz")))
-        write(colData(x)[[lab]], file=lhandle) 
+        curlabs <- colData(x)[[lab]]
 
-        Y <- getClassicMarkers(x, colData(x)[[lab]], de.n=100)
+        ulabs <- unique(curlabs)
+        uhandle <- gzfile(file.path(dir, paste0(prefix, "_label_names_", suff, ".csv.gz")))
+        write(uhandle, file=uhandle) 
+
+        lhandle <- gzfile(file.path(dir, paste0(prefix, "_labels_", suff, ".csv.gz")))
+        write(match(curlabs, ulabs) - 1L, file=lhandle) 
+
+        Y <- getClassicMarkers(x, curlabs, de.n=100)
         curhandle <- gzfile(file.path(dir, paste0(prefix, "_markers_", suff, ".gmt.gz")), open="wb")
         for (i in names(Y)) {
             for (j in names(Y[[i]])) {
                 if (i == j) {
                     next
                 }
-                thing <- c(i, j, match(Y[[i]][[j]], rownames(x)))
+                thing <- c(match(c(i, j), ulabs), match(Y[[i]][[j]], rownames(x))) - 1L
                 write(paste(thing, collapse="\t"), file=curhandle, append=TRUE)
             }
         }
