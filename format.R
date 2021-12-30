@@ -20,12 +20,12 @@ formatter <- function(x, prefix, dir) {
         suff <- sub("label\\.", "", lab)
         curlabs <- colData(x)[[lab]]
 
-        ulabs <- unique(curlabs)
+        ulabs <- sort(unique(curlabs))
         uhandle <- gzfile(file.path(dir, paste0(prefix, "_label_names_", suff, ".csv.gz")))
-        write(uhandle, file=uhandle) 
+        write(ulabs, file=uhandle, ncolumns=1)
 
         lhandle <- gzfile(file.path(dir, paste0(prefix, "_labels_", suff, ".csv.gz")))
-        write(match(curlabs, ulabs) - 1L, file=lhandle) 
+        write(match(curlabs, ulabs) - 1L, file=lhandle, ncolumns=1)
 
         Y <- getClassicMarkers(x, curlabs, de.n=100)
         curhandle <- gzfile(file.path(dir, paste0(prefix, "_markers_", suff, ".gmt.gz")), open="wb")
