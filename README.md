@@ -2,7 +2,7 @@
 
 ## Overview
 
-This provides a number of prebuilt references for easy consumption by the [**singlepp**](https://github.com/clusterfork/singlepp) library.
+This provides a number of prebuilt references for easy consumption by the [**singlepp**](https://github.com/LTLA/singlepp) library.
 It is primarily based on the datasets available in the [**celldex**](https://bioconductor.org/packages/celldex) package,
 themselves derived from the original [**SingleR**](https://bioconductor.org/packages/SingleR) publication.
 Each reference dataset is represented by four files that are described below.
@@ -19,7 +19,8 @@ This file does not contain any row or column names.
 ### `genes.csv`
 
 This is a CSV file containing information about each gene in `matrix.csv`.
-The first column contains the Ensembl identifiers while the second column contains the gene symbols.
+The first column contains the Ensembl identifiers, the second column contains the gene symbols, and the third column contains Entrez IDs.
+Missing identifiers in any field are represented as empty strings.
 No row or column names should be listed here.
 
 ### `labels_*.csv`
